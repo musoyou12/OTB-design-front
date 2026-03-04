@@ -1,4 +1,4 @@
-# OTB — Design Intelligence OS
+# OTB — Design Intelligence
 
 AI-powered design research automation system.
 
