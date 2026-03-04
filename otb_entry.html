@@ -324,7 +324,7 @@ nav.sc{}
       <h1 class="hh">Design Intelligence,<br>Powered by <span class="aw">Data.</span></h1>
       <p class="hs">파편화된 리서치를 전략적 의사결정으로 전환하세요.<br>스케일 있게 운영되는 에이전시를 위해 설계되었습니다.</p>
       <div class="ha">
-        <span class="btn-p" data-p="7">Request Demo <svg class="ics" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        <span class="btn-p" data-brief="true">Request Demo <svg class="ics" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         <span class="btn-s" data-p="4">Explore Platform</span>
       </div>
       <div class="hstats">
@@ -642,6 +642,11 @@ document.querySelectorAll('[data-p]').forEach(el => {
     if(p === 7) { window.location.href = '/otb_demo.html'; }
     else { goTo(p); }
   });
+});
+
+// Hero Request Demo → go to Design Brief panel
+document.querySelectorAll('[data-brief]').forEach(el => {
+  el.addEventListener('click', () => goTo(7));
 });
 // dot clicks
 document.querySelectorAll('.pdot').forEach((d,i) => d.addEventListener('click', () => goTo(i)));
