@@ -290,7 +290,8 @@ nav.sc{}
 <!-- TICKER -->
 <div id="ticker-bar">
   <div class="tt">
-    <span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span><span class="ti">GPT Vision Labeling <span class="ts">◆</span></span><span class="ti">Module A Pipeline <span class="ts">◆</span></span><span class="ti">Vibe Prompts <span class="ts">◆</span></span><span class="ti">Design Tokens <span class="ts">◆</span></span><span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span><span class="ti">GPT Vision Labeling <span class="ts">◆</span></span><span class="ti">Module A Pipeline <span class="ts">◆</span></span><span class="ti">Vibe Prompts <span class="ts">◆</span></span><span class="ti">Design Tokens <span class="ts">◆</span></span>
+    <span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span>
+    <span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span>
   </div>
 </div>
 
@@ -638,11 +639,8 @@ window.addEventListener('keydown', e => {
 document.querySelectorAll('[data-p]').forEach(el => {
   el.addEventListener('click', () => {
     const p = parseInt(el.dataset.p);
-    if(p === 7) {
-      window.location.href = '/otb_demo.html';
-    } else {
-      goTo(p);
-    }
+    if(p === 7) { window.location.href = '/otb_demo.html'; }
+    else { goTo(p); }
   });
 });
 // dot clicks
@@ -682,11 +680,20 @@ function submitBrief(){
   const name=document.getElementById('bf-name').value.trim();
   if(!name){document.getElementById('bf-name').focus();return;}
   for(const r of ['industry','goal','target','channel','req']){if(!tagData[r].length){document.querySelector(`[data-target="${r}"]`).focus();return;}}
-  const fields=[{key:'프로젝트명',val:[name]},{key:'업종',val:tagData.industry},{key:'목표',val:tagData.goal},{key:'타깃 고객층',val:tagData.target},{key:'채널',val:tagData.channel},{key:'요구사항',val:tagData.req},{key:'경쟁사 링크',val:tagData.comp}];
-  const body=document.getElementById('brBody');body.innerHTML='';
-  fields.forEach(f=>{if(!f.val.length)return;const row=document.createElement('div');row.className='br-row';row.innerHTML=`<div class="br-key">${f.key}</div><div class="br-val">${f.val.map(v=>`<span class="tag">${v}</span>`).join('')}</div>`;body.appendChild(row);});
-  document.getElementById('briefForm').style.display='none';
-  document.getElementById('briefResult').classList.add('on');
+  
+  // 브리프 저장 후 바로 demo로 이동
+  const briefData={
+    projectName: name,
+    industry: tagData.industry,
+    goal: tagData.goal,
+    target: tagData.target,
+    channel: tagData.channel,
+    constraints: tagData.req,
+    competitors: tagData.comp,
+    createdAt: new Date().toISOString()
+  };
+  try{ localStorage.setItem('otb_brief', JSON.stringify(briefData)); }catch(e){}
+  window.location.href = '/otb_demo.html';
 }
 function resetBrief(){
   Object.keys(tagData).forEach(k=>{tagData[k]=[];renderTags(k);});
