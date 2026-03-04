@@ -113,7 +113,7 @@ nav.sc{}
 
 /* ticker — fixed bottom */
 #ticker-bar{position:fixed;bottom:0;left:0;right:0;z-index:150;border-top:1px solid var(--border);overflow:hidden;padding:9px 0;background:rgba(8,8,8,.92);backdrop-filter:blur(8px)}
-.tt{display:flex;animation:tk 40s linear infinite;white-space:nowrap;will-change:transform}
+.tt{display:flex;animation:tk 25s linear infinite;white-space:nowrap;will-change:transform;animation-play-state:running}
 .ti{display:inline-flex;align-items:center;gap:24px;padding:0 28px;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--wm);flex-shrink:0}
 .ts{color:var(--a);font-size:7px}
 @keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -290,8 +290,7 @@ nav.sc{}
 <!-- TICKER -->
 <div id="ticker-bar">
   <div class="tt">
-    <span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span>
-    <span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span>
+    <span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span><span class="ti">GPT Vision Labeling <span class="ts">◆</span></span><span class="ti">Module A Pipeline <span class="ts">◆</span></span><span class="ti">Vibe Prompts <span class="ts">◆</span></span><span class="ti">Design Tokens <span class="ts">◆</span></span><span class="ti">DataOps Layer <span class="ts">◆</span></span><span class="ti">ResearchOps Automation <span class="ts">◆</span></span><span class="ti">AI Pattern Analysis <span class="ts">◆</span></span><span class="ti">IA Validation <span class="ts">◆</span></span><span class="ti">Design Intelligence <span class="ts">◆</span></span><span class="ti">Strategic Output <span class="ts">◆</span></span><span class="ti">UX Pattern Library <span class="ts">◆</span></span><span class="ti">Competitive Benchmarking <span class="ts">◆</span></span><span class="ti">GPT Vision Labeling <span class="ts">◆</span></span><span class="ti">Module A Pipeline <span class="ts">◆</span></span><span class="ti">Vibe Prompts <span class="ts">◆</span></span><span class="ti">Design Tokens <span class="ts">◆</span></span>
   </div>
 </div>
 
@@ -637,7 +636,14 @@ window.addEventListener('keydown', e => {
 
 // nav clicks
 document.querySelectorAll('[data-p]').forEach(el => {
-  el.addEventListener('click', () => goTo(parseInt(el.dataset.p)));
+  el.addEventListener('click', () => {
+    const p = parseInt(el.dataset.p);
+    if(p === 7) {
+      window.location.href = '/otb_demo.html';
+    } else {
+      goTo(p);
+    }
+  });
 });
 // dot clicks
 document.querySelectorAll('.pdot').forEach((d,i) => d.addEventListener('click', () => goTo(i)));
