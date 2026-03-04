@@ -1,14 +1,6 @@
 {
   "rewrites": [
-    { "source": "/demo", "destination": "/demo.html" },
-    { "source": "/", "destination": "/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
-    }
+    { "source": "/", "destination": "/otb_entry.html" },
+    { "source": "/demo", "destination": "/otb_demo.html" }
   ]
 }
