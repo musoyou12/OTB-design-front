@@ -394,6 +394,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;
 .sk-line{height:10px;border-radius:3px;background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:400px 100%;animation:shimmer 1.5s infinite}
 @keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
 
+
+/* API Key Modal */
+.apikey-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center}
+.apikey-modal.open{display:flex}
+.apikey-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);width:100%;max-width:420px;padding:24px}
+.apikey-box h3{font-family:var(--fd);font-size:15px;font-weight:700;margin-bottom:6px}
+.apikey-box p{font-size:11px;color:var(--wd);line-height:1.6;margin-bottom:16px}
+.apikey-input{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:11px;color:var(--w);outline:none;font-family:monospace;box-sizing:border-box}
+.apikey-input:focus{border-color:var(--a)}
+.apikey-note{font-size:9px;color:rgba(255,255,255,.25);margin-top:6px;line-height:1.5}
+.apikey-btns{display:flex;gap:8px;margin-top:16px}
+.apikey-confirm{flex:1;padding:9px;background:var(--a);border:none;border-radius:var(--r);color:#000;font-size:11px;font-weight:700;cursor:pointer}
+.apikey-cancel{padding:9px 16px;background:transparent;border:1px solid var(--border);border-radius:var(--r);color:var(--wd);font-size:11px;cursor:pointer}
+
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{opacity:0;animation:fadeUp .4s ease forwards}
@@ -1703,14 +1717,56 @@ function runPrompt(idx) {
   callClaudeStream(system, plain);
 }
 
+// pending run state
+let _pendingSystem = null;
+let _pendingMsg = null;
+
+function getApiKey() {
+  return localStorage.getItem('otb_api_key') || '';
+}
+
+function confirmApiKey() {
+  const key = document.getElementById('apikeyInput').value.trim();
+  if(!key.startsWith('sk-')) { 
+    document.getElementById('apikeyInput').style.borderColor = '#f87171';
+    return; 
+  }
+  localStorage.setItem('otb_api_key', key);
+  closeApiKeyModal();
+  if(_pendingSystem && _pendingMsg) {
+    callClaudeStream(_pendingSystem, _pendingMsg);
+    _pendingSystem = null; _pendingMsg = null;
+  }
+}
+
+function closeApiKeyModal() {
+  document.getElementById('apikeyModal').classList.remove('open');
+  _pendingSystem = null; _pendingMsg = null;
+  document.getElementById('arpSkeleton').style.display = 'none';
+  setArpStatus('', 'Ready');
+}
+
 async function callClaudeStream(system, userMsg) {
   const skeleton = document.getElementById('arpSkeleton');
   const stream = document.getElementById('arpStream');
+  const apiKey = getApiKey();
+
+  if(!apiKey) {
+    _pendingSystem = system;
+    _pendingMsg = userMsg;
+    document.getElementById('apikeyModal').classList.add('open');
+    return;
+  }
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
@@ -1736,7 +1792,8 @@ async function callClaudeStream(system, userMsg) {
   } catch(e) {
     skeleton.style.display = 'none';
     setArpStatus('error', 'Failed');
-    document.getElementById('arpStream').innerHTML = `<div style="color:#f87171;font-size:11px">Network error. Check connection.</div>`;
+    const errMsg = e.message || 'Network error';
+    document.getElementById('arpStream').innerHTML = `<div style="color:#f87171;font-size:11px">${errMsg}<br><span style="opacity:.6;font-size:10px">API 키를 확인하거나 다시 입력해주세요.</span> <span style="color:var(--a);cursor:pointer;text-decoration:underline" onclick="localStorage.removeItem('otb_api_key');setArpStatus('','Ready')">키 재입력</span></div>`;
   }
 }
 
@@ -1853,6 +1910,21 @@ function copyArpCode() {
         <span style="font-size:9px;color:var(--wd);margin-left:auto">Rendered output</span>
       </div>
       <iframe id="arpIframe" sandbox="allow-scripts"></iframe>
+    </div>
+  </div>
+</div>
+
+
+<!-- API Key Modal -->
+<div class="apikey-modal" id="apikeyModal">
+  <div class="apikey-box">
+    <h3>Anthropic API Key</h3>
+    <p>Run 기능은 Claude API를 직접 호출해요.<br>Anthropic Console에서 발급한 키를 입력하세요.</p>
+    <input class="apikey-input" id="apikeyInput" type="password" placeholder="sk-ant-...">
+    <div class="apikey-note">🔒 키는 브라우저에만 저장되며 외부로 전송되지 않아요.<br>console.anthropic.com → API Keys에서 발급 가능해요.</div>
+    <div class="apikey-btns">
+      <button class="apikey-confirm" onclick="confirmApiKey()">저장하고 실행</button>
+      <button class="apikey-cancel" onclick="closeApiKeyModal()">취소</button>
     </div>
   </div>
 </div>
